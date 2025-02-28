@@ -9,15 +9,6 @@ public class myFirstTCPClient {
         if (args.length != 2) // Test for correct # of args
             throw new IllegalArgumentException("Parameter(s): <Server> [<Port>]");
 
-        String server = args[0]; // Server name or IP address
-        int servPort = Integer.parseInt(args[1]);
-
-// Create socket that is connected to server on specified port
-        Socket socket = new Socket(server, servPort);
-        System.out.println("Server connection established");
-        InputStream in = socket.getInputStream();
-        OutputStream out = socket.getOutputStream();
-
 // Create a byte array to hold the short value
         long[] runTimes = new long[7];
 
@@ -45,8 +36,18 @@ public class myFirstTCPClient {
         }
         System.out.println();
 
+        String server = args[0]; // Server name or IP address
+        int servPort = Integer.parseInt(args[1]);
+
+// Create socket that is connected to server on specified port
+        Socket socket = new Socket(server, servPort);
+        System.out.println("Connected to server...sending echo string");
+        InputStream in = socket.getInputStream();
+        OutputStream out = socket.getOutputStream();
+
         long startTime = System.currentTimeMillis();
         out.write(byteBuffer); // Send the encoded string to the server
+
 // Receive the same string back from the server
 
         // make a receive buffer that has a length of short.toString().length() * 2 + 2

@@ -12,8 +12,7 @@ public class myFirstTCPServer {
 
         int servPort = Integer.parseInt(args[0]);
 
-// Create a server socket to accept client connection requests
-
+        // Create a server socket to accept client connection requests
         ServerSocket servSock = new ServerSocket(servPort);
 
         for (;;) { // Run forever, accepting and servicing connections
@@ -28,6 +27,7 @@ public class myFirstTCPServer {
             int recvMsgSize = in.read(byteBuffer); // Size of received message
 
             if (recvMsgSize != 2) {
+                // Send error message back to client if message size is not 2 bytes
                 String errorMessage = "****";
                 byte[] errorBuffer = errorMessage.getBytes(StandardCharsets.UTF_16);
                 System.out.print("\nSending error message: ");
@@ -42,9 +42,11 @@ public class myFirstTCPServer {
                 }
             }
 
+            // Convert received bytes to short
             short num = ByteBuffer.wrap(byteBuffer, 0, 2).order(ByteOrder.BIG_ENDIAN).getShort();
             System.out.println("\nReceived Number: " + num);
 
+            // Convert short to string and send back to client as UTF-16 byte array
             String numStr = Short.toString(num);
             byte[] sendBuffer = numStr.getBytes(StandardCharsets.UTF_16);
 
@@ -56,12 +58,7 @@ public class myFirstTCPServer {
 
             out.write(sendBuffer); // Send the encoded string back to the client
 
-            clntSock.close();
-
-// Receive until client closes connection, indicated by -1 return
-//            while ((recvMsgSize = in.read(byteBuffer)) != -1)
-//                out.write(byteBuffer, 0, recvMsgSize);
-//            clntSock.close(); // Close the socket. We are done with this client!
+            clntSock.close(); // Close the socket. We are done with this client!
         }
         /* NOT REACHED */
     }

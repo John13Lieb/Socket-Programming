@@ -9,12 +9,10 @@ public class myFirstTCPClient {
         if (args.length != 2) // Test for correct # of args
             throw new IllegalArgumentException("Parameter(s): <Server> [<Port>]");
 
-// Create a byte array to hold the short value
-        long[] runTimes = new long[7];
+        long[] runTimes = new long[7]; // Array to store round-trip times
         Scanner scanner = new Scanner(System.in);
         String[] runs = {"first", "second", "third", "fourth", "fifth", "sixth", "seventh"};
 
-        /** ADD FOR LOOP THAT RUNS THE FOLLOWING 7 TIMES **/
         for (int i = 0; i < 7; i++) {
             byte[] byteBuffer = new byte[2];
             System.out.print("Enter " + runs[i] + " short in the range (-32,768 to 32,767): ");
@@ -22,15 +20,14 @@ public class myFirstTCPClient {
             short val;
             while (true) {
                 try {
-                    val = scanner.nextShort();
+                    val = scanner.nextShort(); // Read short from user
                     break;
                 } catch (Exception e) {
                     System.out.print("Invalid input. Please enter a short value in the range (-32,768 to 32,767): ");
-                    scanner.next();
+                    scanner.next(); // Clear invalid input
                 }
             }
 
-// Convert input String to bytes using the default character encoding
             ByteBuffer.wrap(byteBuffer).order(ByteOrder.BIG_ENDIAN).putShort(val); // convert short to byte array
             System.out.print("\nSending Bytes: ");
             for (byte b : byteBuffer) {
@@ -41,7 +38,7 @@ public class myFirstTCPClient {
             String server = args[0]; // Server name or IP address
             int servPort = Integer.parseInt(args[1]);
 
-// Create socket that is connected to server on specified port
+            // Create socket that is connected to server on specified port
             Socket socket = new Socket(server, servPort);
             System.out.println("Connected to server...sending echo string");
             InputStream in = socket.getInputStream();
@@ -50,22 +47,23 @@ public class myFirstTCPClient {
             long startTime = System.currentTimeMillis();
             out.write(byteBuffer); // Send the encoded string to the server
 
-// Receive the same string back from the server
             String numStr = Short.toString(val);
-            int recvMsgSize = numStr.length() * 2 + 2;
+            int recvMsgSize = numStr.length() * 2 + 2; // Size of received message (UTF-16)
             byte[] recvBuffer = new byte[recvMsgSize];
 
             int totalBytesRcvd = 0; // Total bytes received so far
             int bytesRcvd; // Bytes received in last read
 
+            // Read from server until buffer is full
             while (totalBytesRcvd < recvBuffer.length) {
                 if ((bytesRcvd = in.read(recvBuffer, totalBytesRcvd,
                         recvBuffer.length - totalBytesRcvd)) == -1)
                     throw new SocketException("Connection close prematurely");
                 totalBytesRcvd += bytesRcvd;
             }
+
             long endTime = System.currentTimeMillis();
-            long runTime = endTime - startTime;
+            long runTime = endTime - startTime; // Calculate trip time (ms)
             runTimes[i] = runTime;
 
             System.out.print("Received Bytes: ");
@@ -78,7 +76,7 @@ public class myFirstTCPClient {
         }
         scanner.close();
 
-        /** AFTER 7 RUNS, REPORT MIN, MAX, AND AVERAGE RUNTIME **/
+        // Compute round-trip statistics
         long min = runTimes[0];
         long max = runTimes[0];
         long sum = runTimes[0];

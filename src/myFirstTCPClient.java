@@ -9,7 +9,7 @@ public class myFirstTCPClient {
         if (args.length != 2) // Test for correct # of args
             throw new IllegalArgumentException("Parameter(s): <Server> [<Port>]");
 
-        long[] runTimes = new long[7]; // Array to store round-trip times
+        double[] runTimes = new double[7]; // Array to store round-trip times
         Scanner scanner = new Scanner(System.in);
         String[] runs = {"first", "second", "third", "fourth", "fifth", "sixth", "seventh"};
 
@@ -44,7 +44,7 @@ public class myFirstTCPClient {
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
 
-            long startTime = System.currentTimeMillis();
+            double startTime = System.nanoTime();
             out.write(byteBuffer); // Send the encoded string to the server
 
             String numStr = Short.toString(val);
@@ -62,24 +62,24 @@ public class myFirstTCPClient {
                 totalBytesRcvd += bytesRcvd;
             }
 
-            long endTime = System.currentTimeMillis();
-            long runTime = endTime - startTime; // Calculate trip time (ms)
+            double endTime = System.nanoTime();
+            double runTime = (endTime - startTime) / 1_000_000; // Calculate trip time (ms)
             runTimes[i] = runTime;
 
             System.out.print("Received Bytes: ");
             for (byte r : recvBuffer) {
                 System.out.printf("0x%02X ", r);
             }
-            System.out.println("\nDuration: " + runTime + " ms\n");
+            System.out.printf("\nDuration: %.2f ms\n", runTime);
 
             socket.close(); // Close the socket and its streams
         }
         scanner.close();
 
         // Compute round-trip statistics
-        long min = runTimes[0];
-        long max = runTimes[0];
-        long sum = runTimes[0];
+        double min = runTimes[0];
+        double max = runTimes[0];
+        double sum = runTimes[0];
 
         for (int i = 1; i < runTimes.length; i++) {
             if (runTimes[i] < min) {
@@ -90,12 +90,15 @@ public class myFirstTCPClient {
             }
             sum += runTimes[i];
         }
-        long avg = sum / runTimes.length;
+        double avg = sum / runTimes.length;
 
-        String output = "Seven Number Round-Trip Statistics: \n" +
-                "Minimum: " + min + " ms\n" +
-                "Maximum: " + max + " ms\n" +
-                "Average: " + avg + " ms";
-        System.out.println(output + "\n");
+        String output = String.format(
+                "%nSeven Number Round-Trip Statistics:%n" +
+                        "Minimum: %.2f ms%n" +
+                        "Maximum: %.2f ms%n" +
+                        "Average: %.2f ms%n",
+                min, max, avg
+        );
+        System.out.println(output);
     }
 }

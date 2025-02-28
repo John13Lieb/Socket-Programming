@@ -18,30 +18,39 @@ public class myFirstTCPClient {
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 
-// [ADD COMMENT HERE]
+// Create a byte array to hold the short value
+        long[] runTimes = new long[7];
+
+        /** ADD FOR LOOP THAT RUNS THE FOLLOWING 7 TIMES **/
         byte[] byteBuffer = new byte[2];
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter a short in the range (-32,768 to 32,767): ");
+        System.out.print("Enter a short in the range (-32,768 to 32,767): ");
 
         short val;
-        try {
-            val = scanner.nextShort();
-        } catch (Exception e) {
-            System.out.println("Invalid input. Please enter a short value in the range (-32,768 to 32,767): ");
-            val = scanner.nextShort();
+        while (true) {
+            try {
+                val = scanner.nextShort();
+                break;
+            } catch (Exception e) {
+                System.out.print("Invalid input. Please enter a short value in the range (-32,768 to 32,767): ");
+                scanner.next();
+            }
         }
-
-        scanner.close();
 
 // Convert input String to bytes using the default character encoding
         ByteBuffer.wrap(byteBuffer).order(ByteOrder.BIG_ENDIAN).putShort(val); // convert short to byte array
+        System.out.print("\nSending: ");
         for (byte b : byteBuffer) {
             System.out.printf("0x%02X ", b);
         }
         System.out.println();
 
+        long startTime = System.currentTimeMillis();
         out.write(byteBuffer); // Send the encoded string to the server
 // Receive the same string back from the server
+
+        // make a receive buffer that has a length of short.toString().length() * 2 + 2
+
         int totalBytesRcvd = 0; // Total bytes received so far
         int bytesRcvd; // Bytes received in last read
         while (totalBytesRcvd < byteBuffer.length) {
@@ -50,7 +59,15 @@ public class myFirstTCPClient {
                 throw new SocketException("Connection close prematurely");
             totalBytesRcvd += bytesRcvd;
         }
+        long endTime = System.currentTimeMillis();
+        long runTime = endTime - startTime;
+
         System.out.println("Received: " + new String(byteBuffer));
+        System.out.println("Duration: " + runTime + " ms\n");
+
+        /** AFTER 7 RUNS, REPORT MIN, MAX, AND AVERAGE RUNTIME **/
+
+        scanner.close();
         socket.close(); // Close the socket and its streams
     }
 }

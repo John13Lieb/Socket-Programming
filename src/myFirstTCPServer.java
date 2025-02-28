@@ -2,6 +2,7 @@ import java.net.*; // for Socket, ServerSocket, and InetAddress
 import java.io.*; // for IOException and Input/OutputStream
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 
 public class myFirstTCPServer {
     private static final int BUFSIZE = 2; // Size of receive buffer
@@ -26,13 +27,34 @@ public class myFirstTCPServer {
             byte[] byteBuffer = new byte[BUFSIZE]; // Receive buffer
             int recvMsgSize = in.read(byteBuffer); // Size of received message
 
-            System.out.print("\nReceived Bytes: ");
-            for (byte b : byteBuffer) {
-                System.out.printf("0x%02X ", b);
+            if (recvMsgSize != 2) {
+                String errorMessage = "****";
+                byte[] errorBuffer = errorMessage.getBytes(StandardCharsets.UTF_16);
+                System.out.print("\nSending error message: ");
+                for (byte b : errorBuffer) {
+                    System.out.printf("0x%02X ", b);
+                }
+            }
+            else {
+                System.out.print("\nReceived Bytes: ");
+                for (byte b : byteBuffer) {
+                    System.out.printf("0x%02X ", b);
+                }
             }
 
             short num = ByteBuffer.wrap(byteBuffer, 0, 2).order(ByteOrder.BIG_ENDIAN).getShort();
             System.out.println("\nReceived Number: " + num);
+
+            String numStr = Short.toString(num);
+            byte[] sendBuffer = numStr.getBytes(StandardCharsets.UTF_16);
+
+            System.out.print("Sending Bytes: ");
+            for (byte b : sendBuffer) {
+                System.out.printf("0x%02X ", b);
+            }
+            System.out.println("\n");
+
+            out.write(sendBuffer); // Send the encoded string back to the client
 
             clntSock.close();
 

@@ -30,7 +30,7 @@ public class myFirstTCPClient {
 
 // Convert input String to bytes using the default character encoding
         ByteBuffer.wrap(byteBuffer).order(ByteOrder.BIG_ENDIAN).putShort(val); // convert short to byte array
-        System.out.print("\nSending: ");
+        System.out.print("\nSending Bytes: ");
         for (byte b : byteBuffer) {
             System.out.printf("0x%02X ", b);
         }
@@ -63,7 +63,7 @@ public class myFirstTCPClient {
         long endTime = System.currentTimeMillis();
         long runTime = endTime - startTime;
 
-        System.out.println("Received: " + new String(byteBuffer));
+        System.out.println("Received Bytes: " + new String(byteBuffer));
         System.out.println("Duration: " + runTime + " ms\n");
 
         /** AFTER 7 RUNS, REPORT MIN, MAX, AND AVERAGE RUNTIME **/

@@ -70,7 +70,8 @@ public class myFirstTCPClient {
             for (byte r : recvBuffer) {
                 System.out.printf("0x%02X ", r);
             }
-            System.out.printf("\nDuration: %.2f ms\n", runTime);
+            System.out.printf("\nDuration: %.2f ms", runTime);
+            System.out.println("\n");
 
             socket.close(); // Close the socket and its streams
         }

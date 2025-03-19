@@ -1,5 +1,10 @@
+package UDPSocket;
+
 import java.net.*;  // for DatagramSocket, DatagramPacket, and InetAddress
 import java.io.*;   // for IOException
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Scanner;
 
 public class myFirstUDPClient {
 
@@ -7,15 +12,35 @@ public class myFirstUDPClient {
     private static final int MAXTRIES = 5;     // Maximum retransmissions
 
     public static void main(String[] args) throws IOException {
-
-        if ((args.length < 2) || (args.length > 3))  // Test for correct # of args
-            throw new IllegalArgumentException("Parameter(s): <Server> <Word> [<Port>]");
+        if (args.length != 2) // Test for correct # of args
+            throw new IllegalArgumentException("Parameter(s): <Server> [<Port>]");
 
         InetAddress serverAddress = InetAddress.getByName(args[0]);  // Server address
         // Convert input String to bytes using the default character encoding
-        byte[] bytesToSend = args[1].getBytes();
+        Scanner scanner = new Scanner(System.in);
 
-        int servPort = (args.length == 3) ? Integer.parseInt(args[2]) : 7;
+        byte[] bytesToSend = new byte[2];
+        System.out.print("Enter short in the range (-32,768 to 32,767): ");
+
+        short val;
+        while (true) {
+            try {
+                val = scanner.nextShort(); // Read short from user
+                break;
+            } catch (Exception e) {
+                System.out.print("Invalid input. Please enter a short value in the range (-32,768 to 32,767): ");
+                scanner.next(); // Clear invalid input
+            }
+        }
+
+        ByteBuffer.wrap(bytesToSend).order(ByteOrder.BIG_ENDIAN).putShort(val); // convert short to byte array
+        System.out.print("\nSending Bytes: ");
+        for (byte b : bytesToSend) {
+            System.out.printf("0x%02X ", b);
+        }
+        System.out.println();
+
+        int servPort = Integer.parseInt(args[1]);
 
         DatagramSocket socket = new DatagramSocket();
 

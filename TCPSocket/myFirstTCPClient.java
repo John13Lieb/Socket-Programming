@@ -1,3 +1,5 @@
+package TCPSocket;
+
 import java.net.*; // for Socket
 import java.io.*; // for IOException and Input/OutputStream
 import java.nio.ByteBuffer;

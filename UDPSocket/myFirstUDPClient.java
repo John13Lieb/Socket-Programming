@@ -49,8 +49,10 @@ public class myFirstUDPClient {
         DatagramPacket sendPacket = new DatagramPacket(bytesToSend,  // Sending packet
                 bytesToSend.length, serverAddress, servPort);
 
-        DatagramPacket receivePacket =                              // Receiving packet
-                new DatagramPacket(new byte[bytesToSend.length], bytesToSend.length);
+        String numStr = Short.toString(val);
+        int recvMsgSize = numStr.length() * 2 + 2; // Size of received message (UTF-16)
+
+        DatagramPacket receivePacket = new DatagramPacket(new byte[recvMsgSize], recvMsgSize); // Receiving packet
 
         int tries = 0;      // Packets may be lost, so we have to keep trying
         boolean receivedResponse = false;
@@ -69,10 +71,18 @@ public class myFirstUDPClient {
             }
         } while ((!receivedResponse) && (tries < MAXTRIES));
 
-        if (receivedResponse)
-            System.out.println("Received: " + new String(receivePacket.getData()));
-        else
+        if (receivedResponse) {
+            byte[] recvBuffer = receivePacket.getData();
+
+            System.out.print("Received Bytes: ");
+            for (byte r : recvBuffer) {
+                System.out.printf("0x%02X ", r);
+            }
+            System.out.println("\n");
+        }
+        else {
             System.out.println("No response -- giving up.");
+        }
 
         socket.close();
     }

@@ -58,8 +58,10 @@ public class myFirstUDPClient {
             DatagramPacket receivePacket = new DatagramPacket(new byte[recvMsgSize], recvMsgSize); // Receiving packet
 
             int tries = 0;      // Packets may be lost, so we have to keep trying
+            double startTime;
             boolean receivedResponse = false;
             do {
+                startTime = System.nanoTime();
                 socket.send(sendPacket);          // Send the echo string
                 try {
                     socket.receive(receivePacket);  // Attempt echo reply reception
@@ -74,6 +76,10 @@ public class myFirstUDPClient {
                 }
             } while ((!receivedResponse) && (tries < MAXTRIES));
 
+            double endTime = System.nanoTime();
+            double runTime = (endTime - startTime) / 1_000_000; // Calculate trip time (ms)
+            runTimes[i] = runTime;
+
             if (receivedResponse) {
                 byte[] recvBuffer = receivePacket.getData();
 
@@ -81,14 +87,41 @@ public class myFirstUDPClient {
                 for (byte r : recvBuffer) {
                     System.out.printf("0x%02X ", r);
                 }
+                System.out.printf("\nDuration: %.2f ms", runTime);
                 System.out.println("\n");
-            } else {
+            }
+            else {
                 System.out.println("No response -- giving up.");
+                System.out.println("\n");
             }
 
             socket.close();
         }
         scanner.close();
 
+        // Compute round-trip statistics
+        double min = runTimes[0];
+        double max = runTimes[0];
+        double sum = runTimes[0];
+
+        for (int i = 1; i < runTimes.length; i++) {
+            if (runTimes[i] < min) {
+                min = runTimes[i];
+            }
+            if (runTimes[i] > max) {
+                max = runTimes[i];
+            }
+            sum += runTimes[i];
+        }
+        double avg = sum / runTimes.length;
+
+        String output = String.format(
+                "%nSeven Number Round-Trip Statistics:%n" +
+                        "Minimum: %.2f ms%n" +
+                        "Maximum: %.2f ms%n" +
+                        "Average: %.2f ms%n",
+                min, max, avg
+        );
+        System.out.println(output);
     }
 }

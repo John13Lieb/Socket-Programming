@@ -30,7 +30,7 @@ public class myFirstTCPClient {
                 }
             }
 
-            ByteBuffer.wrap(byteBuffer).order(ByteOrder.BIG_ENDIAN).putShort(val); // convert short to byte array
+            ByteBuffer.wrap(byteBuffer).order(ByteOrder.BIG_ENDIAN).putShort(val); // Convert short to byte array
             System.out.print("\nSending Bytes: ");
             for (byte b : byteBuffer) {
                 System.out.printf("0x%02X ", b);

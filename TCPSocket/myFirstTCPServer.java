@@ -7,7 +7,9 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
 public class myFirstTCPServer {
+
     private static final int BUFSIZE = 2; // Size of receive buffer
+
     public static void main(String[] args) throws IOException {
         if (args.length != 1) // Test for correct # of args
             throw new IllegalArgumentException("Parameter(s): <Port>");

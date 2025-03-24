@@ -1,18 +1,17 @@
 package UDPSocket;
 
-import java.net.*;  // for DatagramSocket, DatagramPacket, and InetAddress
-import java.io.*;   // for IOException
+import java.net.*; // for DatagramSocket, DatagramPacket, and InetAddress
+import java.io.*; // for IOException
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
 public class myFirstUDPServer {
 
-    private static final int ECHOMAX = 2;  // Maximum size of echo datagram
+    private static final int ECHOMAX = 2; // Maximum size of echo datagram
 
     public static void main(String[] args) throws IOException {
-
-        if (args.length != 1)  // Test for correct argument list
+        if (args.length != 1) // Test for correct argument list
             throw new IllegalArgumentException("Parameter(s): <Port>");
 
         int servPort = Integer.parseInt(args[0]);
@@ -20,8 +19,8 @@ public class myFirstUDPServer {
         DatagramSocket socket = new DatagramSocket(servPort);
         DatagramPacket packet = new DatagramPacket(new byte[ECHOMAX], ECHOMAX);
 
-        for (;;) {  // Run forever, receiving and echoing datagrams
-            socket.receive(packet);     // Receive packet from client
+        for (;;) { // Run forever, receiving and echoing datagrams
+            socket.receive(packet); // Receive packet from client
             System.out.println("Handling client at " +
                     packet.getAddress().getHostAddress() + " on port " + packet.getPort());
 
@@ -62,7 +61,7 @@ public class myFirstUDPServer {
 
                 DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length,
                         packet.getAddress(), packet.getPort());
-                socket.send(sendPacket);       // Send the same packet back to client
+                socket.send(sendPacket); // Send the same packet back to client
             }
 
             packet.setLength(ECHOMAX); // Reset length to avoid shrinking buffer

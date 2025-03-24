@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 public class myFirstUDPClient {
 
-    private static final int TIMEOUT = 3000;   // Resend timeout (milliseconds)
-    private static final int MAXTRIES = 5;     // Maximum retransmissions
+    private static final int TIMEOUT = 3000; // Resend timeout (milliseconds)
+    private static final int MAXTRIES = 5; // Maximum retransmissions
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2) // Test for correct # of args
@@ -19,7 +19,6 @@ public class myFirstUDPClient {
         Scanner scanner = new Scanner(System.in);
         String[] runs = {"first", "second", "third", "fourth", "fifth", "sixth", "seventh"};
 
-        // Convert input String to bytes using the default character encoding
         for (int i = 0; i < 7; i++) {
             byte[] bytesToSend = new byte[2];
             System.out.print("Enter " + runs[i] + " short in the range (-32,768 to 32,767): ");
@@ -35,21 +34,21 @@ public class myFirstUDPClient {
                 }
             }
 
-            ByteBuffer.wrap(bytesToSend).order(ByteOrder.BIG_ENDIAN).putShort(val); // convert short to byte array
+            ByteBuffer.wrap(bytesToSend).order(ByteOrder.BIG_ENDIAN).putShort(val); // Convert short to byte array
             System.out.print("\nSending Bytes: ");
             for (byte b : bytesToSend) {
                 System.out.printf("0x%02X ", b);
             }
             System.out.println();
 
-            InetAddress serverAddress = InetAddress.getByName(args[0]);  // Server name or IP address
+            InetAddress serverAddress = InetAddress.getByName(args[0]); // Server name or IP address
             int servPort = Integer.parseInt(args[1]);
 
             DatagramSocket socket = new DatagramSocket();
 
-            socket.setSoTimeout(TIMEOUT);  // Maximum receive blocking time (milliseconds)
+            socket.setSoTimeout(TIMEOUT); // Maximum receive blocking time (milliseconds)
 
-            DatagramPacket sendPacket = new DatagramPacket(bytesToSend,  // Sending packet
+            DatagramPacket sendPacket = new DatagramPacket(bytesToSend, // Sending packet
                     bytesToSend.length, serverAddress, servPort);
 
             String numStr = Short.toString(val);
@@ -57,20 +56,20 @@ public class myFirstUDPClient {
 
             DatagramPacket receivePacket = new DatagramPacket(new byte[recvMsgSize], recvMsgSize); // Receiving packet
 
-            int tries = 0;      // Packets may be lost, so we have to keep trying
+            int tries = 0; // Packets may be lost, so we have to keep trying
             double startTime;
             boolean receivedResponse = false;
             do {
                 startTime = System.nanoTime();
-                socket.send(sendPacket);          // Send the echo string
+                socket.send(sendPacket); // Send the echo string
                 try {
-                    socket.receive(receivePacket);  // Attempt echo reply reception
+                    socket.receive(receivePacket); // Attempt echo reply reception
 
-                    if (!receivePacket.getAddress().equals(serverAddress))  // Check source
+                    if (!receivePacket.getAddress().equals(serverAddress)) // Check source
                         throw new IOException("Received packet from an unknown source");
 
                     receivedResponse = true;
-                } catch (InterruptedIOException e) {  // We did not get anything
+                } catch (InterruptedIOException e) { // We did not get anything
                     tries += 1;
                     System.out.println("Timed out, " + (MAXTRIES - tries) + " more tries...");
                 }
@@ -95,7 +94,7 @@ public class myFirstUDPClient {
                 System.out.println("\n");
             }
 
-            socket.close();
+            socket.close(); // Close the socket
         }
         scanner.close();
 
